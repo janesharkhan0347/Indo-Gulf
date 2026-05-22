@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="{% block meta_desc %}IndoGulf – India's Premier B2B Export Marketplace for Gulf Countries. Connect with verified Indian exporters for UAE, Saudi Arabia, Qatar, Oman, Kuwait & Bahrain.{% endblock %}"/>
+  <meta name="keywords" content="{% block meta_keys %}India export, Gulf import, B2B marketplace, UAE suppliers, Saudi Arabia importers, Indian exporters{% endblock %}"/>
+  <meta property="og:title" content="{% block og_title %}IndoGulf – India to Gulf B2B Export Marketplace{% endblock %}"/>
+  <meta property="og:description" content="Connect with verified Indian exporters and Gulf importers."/>
+  <meta property="og:type" content="website"/>
+  <title>{% block title %}IndoGulf{% endblock %} | India–Gulf B2B Export Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#0f4c35',
+            gold:      '#c9a84c',
+            'gold-light': '#e8c96d',
+            'dark-bg': '#0a1f14',
+          },
+          fontFamily: { sans: ['Inter','system-ui','sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+  <!-- NAVBAR -->
+  {% include 'navbar.html' %}
+
+  <!-- FLASH MESSAGES -->
+  <div class="max-w-7xl mx-auto px-4 pt-2">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for cat, msg in messages %}
+          <div class="flash-msg flash-{{ cat }} flex items-center justify-between px-4 py-3 rounded-lg mb-2 text-sm font-medium
+            {% if cat == 'success' %}bg-green-100 text-green-800 border border-green-300
+            {% elif cat == 'danger' %}bg-red-100 text-red-800 border border-red-300
+            {% elif cat == 'warning' %}bg-yellow-100 text-yellow-800 border border-yellow-300
+            {% else %}bg-blue-100 text-blue-800 border border-blue-300{% endif %}">
+            <span>{{ msg }}</span>
+            <button onclick="this.parentElement.remove()" class="ml-4 text-lg leading-none">&times;</button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main>{% block content %}{% endblock %}</main>
+
+  <!-- FOOTER -->
+  {% include 'footer.html' %}
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

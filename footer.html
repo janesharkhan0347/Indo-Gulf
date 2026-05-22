@@ -1,0 +1,49 @@
+<footer class="bg-dark-bg text-gray-300 mt-16 pt-12 pb-6">
+  <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+
+    <div>
+      <h3 class="text-gold font-extrabold text-xl mb-3">IndoGulf</h3>
+      <p class="text-sm text-gray-400 leading-relaxed">
+        India's premier B2B export marketplace connecting Indian exporters with Gulf country importers.
+      </p>
+      <div class="flex gap-3 mt-4 text-2xl">
+        <span title="UAE">🇦🇪</span><span title="Saudi Arabia">🇸🇦</span>
+        <span title="Qatar">🇶🇦</span><span title="Oman">🇴🇲</span>
+        <span title="Kuwait">🇰🇼</span><span title="Bahrain">🇧🇭</span>
+      </div>
+    </div>
+
+    <div>
+      <h4 class="text-white font-semibold mb-3">Quick Links</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a href="{{ url_for('main.index') }}" class="hover:text-gold transition">Home</a></li>
+        <li><a href="{{ url_for('main.products') }}" class="hover:text-gold transition">Products</a></li>
+        <li><a href="{{ url_for('main.all_categories') }}" class="hover:text-gold transition">Categories</a></li>
+        <li><a href="{{ url_for('auth.register') }}" class="hover:text-gold transition">Register</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="text-white font-semibold mb-3">Gulf Markets</h4>
+      <ul class="space-y-2 text-sm">
+        <li>🇦🇪 UAE</li><li>🇸🇦 Saudi Arabia</li>
+        <li>🇶🇦 Qatar</li><li>🇴🇲 Oman</li>
+        <li>🇰🇼 Kuwait</li><li>🇧🇭 Bahrain</li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="text-white font-semibold mb-3">For Business</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a href="{{ url_for('auth.register_seller') }}" class="hover:text-gold transition">Become a Seller</a></li>
+        <li><a href="{{ url_for('auth.register_buyer') }}" class="hover:text-gold transition">Register as Buyer</a></li>
+        <li><a href="{{ url_for('auth.login') }}" class="hover:text-gold transition">Login</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 mt-8 pt-6 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+    <p>&copy; {{ 2025 }} IndoGulf. All rights reserved.</p>
+    <p class="mt-2 md:mt-0">🇮🇳 Made in India · Connecting to the Gulf</p>
+  </div>
+</footer>

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Manage Products{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+  <div class="flex items-center gap-3 mb-6">
+    <a href="{{ url_for('admin.dashboard') }}" class="text-gray-400 hover:text-primary text-sm">← Dashboard</a>
+    <h1 class="text-2xl font-extrabold text-primary">📦 Manage Products</h1>
+  </div>
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 text-xs text-gray-400 uppercase">
+        <tr>
+          <th class="px-4 py-3 text-left">Product</th>
+          <th class="px-4 py-3 text-left">Seller</th>
+          <th class="px-4 py-3 text-left">Price</th>
+          <th class="px-4 py-3 text-left">Featured</th>
+          <th class="px-4 py-3 text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        {% for p in products %}
+          <tr class="hover:bg-gray-50 transition">
+            <td class="px-4 py-3">
+              <p class="font-semibold line-clamp-1">{{ p.title }}</p>
+              <p class="text-xs text-gray-400">{{ p.category.name if p.category else '' }}</p>
+            </td>
+            <td class="px-4 py-3 text-xs text-gray-500">{{ p.seller.company_name if p.seller else '—' }}</td>
+            <td class="px-4 py-3 text-primary font-semibold">${{ "%.2f"|format(p.price) }}</td>
+            <td class="px-4 py-3">
+              <span class="text-xs">{% if p.is_featured %}⭐ Yes{% else %}—{% endif %}</span>
+            </td>
+            <td class="px-4 py-3 flex gap-2 flex-wrap">
+              <form method="POST" action="{{ url_for('admin.feature_product', pid=p.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button class="text-xs bg-yellow-50 text-yellow-700 px-3 py-1 rounded-lg hover:bg-yellow-100 transition">
+                  {% if p.is_featured %}Unfeature{% else %}⭐ Feature{% endif %}
+                </button>
+              </form>
+              <form method="POST" action="{{ url_for('admin.delete_product', pid=p.id) }}"
+                    onsubmit="return confirm('Delete this product?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button class="text-xs bg-red-50 text-red-600 px-3 py-1 rounded-lg hover:bg-red-100 transition">🗑 Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

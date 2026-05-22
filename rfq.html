@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Send RFQ – {{ product.title }}{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-12">
+  <div class="bg-white rounded-3xl shadow-lg border border-gray-100 p-8">
+    <div class="text-center mb-6">
+      <h1 class="text-2xl font-extrabold text-primary">📋 Request for Quote</h1>
+      <p class="text-gray-400 text-sm mt-1">Send your inquiry to the seller</p>
+    </div>
+
+    <div class="bg-gray-50 rounded-xl p-4 mb-6 flex gap-4 items-center">
+      <div class="text-4xl">{{ product.category.icon if product.category else '📦' }}</div>
+      <div>
+        <p class="font-semibold text-gray-800">{{ product.title }}</p>
+        <p class="text-sm text-gray-500">${{ "%.2f"|format(product.price) }}/{{ product.unit }} · MOQ: {{ product.moq }}</p>
+      </div>
+    </div>
+
+    <form method="POST" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Quantity Required</label>
+          {{ form.quantity(class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary outline-none") }}
+          {% for e in form.quantity.errors %}<p class="text-red-500 text-xs mt-1">{{ e }}</p>{% endfor %}
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Unit</label>
+          {{ form.unit(class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary outline-none") }}
+        </div>
+      </div>
+      <div class="mb-6">
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Message to Seller</label>
+        {{ form.message(class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary outline-none h-32 resize-none",
+                        placeholder="Describe your requirements, delivery timeline, destination port, etc.") }}
+        {% for e in form.message.errors %}<p class="text-red-500 text-xs mt-1">{{ e }}</p>{% endfor %}
+      </div>
+      {{ form.submit(class="w-full bg-primary text-white py-3 rounded-xl font-bold hover:bg-green-800 transition") }}
+    </form>
+  </div>
+</div>
+{% endblock %}

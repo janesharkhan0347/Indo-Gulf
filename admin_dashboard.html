@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+  <div class="flex flex-col md:flex-row gap-8">
+
+    <!-- Sidebar -->
+    <aside class="w-full md:w-56 flex-shrink-0">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-dark-bg p-5 text-center">
+          <div class="text-4xl mb-1">⚙️</div>
+          <p class="text-white font-bold text-sm">Admin Panel</p>
+          <p class="text-gray-400 text-xs">IndoGulf</p>
+        </div>
+        <nav class="p-3 space-y-1 text-sm">
+          <a href="{{ url_for('admin.dashboard') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 text-gray-800 font-semibold">📊 Dashboard</a>
+          <a href="{{ url_for('admin.sellers') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-600 hover:text-primary transition">🇮🇳 Sellers</a>
+          <a href="{{ url_for('admin.users') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-600 hover:text-primary transition">👥 All Users</a>
+          <a href="{{ url_for('admin.products') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-600 hover:text-primary transition">📦 Products</a>
+          <a href="{{ url_for('admin.rfqs') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-600 hover:text-primary transition">📋 RFQs</a>
+          <form method="POST" action="{{ url_for('admin.do_seed_categories') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <button class="w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-600 hover:text-primary transition">🌱 Seed Categories</button>
+          </form>
+          <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-50 text-red-500 transition">🚪 Logout</a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Stats + Data -->
+    <div class="flex-1 space-y-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {% for label, value, icon, color in [
+          ('Total Users', stats.total_users, '👥', 'border-blue-200'),
+          ('Sellers', stats.total_sellers, '🇮🇳', 'border-primary'),
+          ('Buyers', stats.total_buyers, '🌍', 'border-gold'),
+          ('Pending Approval', stats.pending_sellers, '⏳', 'border-orange-200'),
+          ('Products', stats.total_products, '📦', 'border-purple-200'),
+          ('Total RFQs', stats.total_rfqs, '📋', 'border-green-200'),
+          ('Pending RFQs', stats.pending_rfqs, '🔔', 'border-red-200'),
+        ] %}
+          <div class="bg-white rounded-2xl shadow-sm border-2 {{ color }} p-5 text-center">
+            <div class="text-3xl mb-1">{{ icon }}</div>
+            <div class="text-2xl font-extrabold text-gray-800">{{ value }}</div>
+            <div class="text-xs text-gray-400">{{ label }}</div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Pending Sellers -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h2 class="text-lg font-bold text-primary mb-4">Recent Sellers</h2>
+        {% if recent_sellers %}
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="text-xs text-gray-400 uppercase border-b">
+                <tr>
+                  <th class="pb-2 text-left">Name</th>
+                  <th class="pb-2 text-left">Company</th>
+                  <th class="pb-2 text-left">Email</th>
+                  <th class="pb-2 text-left">Status</th>
+                  <th class="pb-2 text-left">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-50">
+                {% for s in recent_sellers %}
+                  <tr class="hover:bg-gray-50 transition">
+                    <td class="py-2 font-medium">{{ s.name }}</td>
+                    <td class="py-2 text-gray-500">{{ s.company_name }}</td>
+                    <td class="py-2 text-gray-500 text-xs">{{ s.email }}</td>
+                    <td class="py-2">
+                      <span class="text-xs px-2 py-0.5 rounded-full font-semibold
+                        {% if s.is_approved %}bg-green-100 text-green-700{% else %}bg-yellow-100 text-yellow-700{% endif %}">
+                        {% if s.is_approved %}Approved{% else %}Pending{% endif %}
+                      </span>
+                    </td>
+                    <td class="py-2 flex gap-2">
+                      {% if not s.is_approved %}
+                        <form method="POST" action="{{ url_for('admin.approve_seller', uid=s.id) }}">
+                          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                          <button class="text-xs bg-green-50 text-green-700 px-3 py-1 rounded-lg hover:bg-green-100 transition">Approve</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('admin.reject_seller', uid=s.id) }}">
+                          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                          <button class="text-xs bg-red-50 text-red-600 px-3 py-1 rounded-lg hover:bg-red-100 transition">Reject</button>
+                        </form>
+                      {% else %}
+                        <span class="text-xs text-gray-400">✓ Approved</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="text-gray-400 text-sm text-center py-6">No sellers yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

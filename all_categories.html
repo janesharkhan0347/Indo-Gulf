@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}All Categories{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-extrabold text-primary mb-2">All Categories</h1>
+    <p class="text-gray-500">India's finest products for Gulf markets</p>
+  </div>
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
+    {% for cat in categories %}
+      <a href="{{ url_for('main.category', slug=cat.slug) }}"
+         class="group flex flex-col items-center bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-gold hover:-translate-y-1 transition-all text-center">
+        <span class="text-5xl mb-3">{{ cat.icon }}</span>
+        <span class="text-sm font-semibold text-gray-700 group-hover:text-primary">{{ cat.name }}</span>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

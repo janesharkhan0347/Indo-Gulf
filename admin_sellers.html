@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Manage Sellers{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+  <div class="flex items-center gap-3 mb-6">
+    <a href="{{ url_for('admin.dashboard') }}" class="text-gray-400 hover:text-primary text-sm">← Dashboard</a>
+    <h1 class="text-2xl font-extrabold text-primary">🇮🇳 Manage Sellers</h1>
+  </div>
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 text-xs text-gray-400 uppercase">
+        <tr>
+          <th class="px-4 py-3 text-left">Name / Company</th>
+          <th class="px-4 py-3 text-left">Email</th>
+          <th class="px-4 py-3 text-left">GST / IEC</th>
+          <th class="px-4 py-3 text-left">Status</th>
+          <th class="px-4 py-3 text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        {% for s in sellers %}
+          <tr class="hover:bg-gray-50 transition">
+            <td class="px-4 py-3">
+              <p class="font-semibold">{{ s.name }}</p>
+              <p class="text-xs text-gray-400">{{ s.company_name }}</p>
+            </td>
+            <td class="px-4 py-3 text-gray-500 text-xs">{{ s.email }}</td>
+            <td class="px-4 py-3 text-xs text-gray-400">
+              <p>GST: {{ s.gst_number or '—' }}</p>
+              <p>IEC: {{ s.iec_code or '—' }}</p>
+            </td>
+            <td class="px-4 py-3">
+              <span class="text-xs px-2 py-0.5 rounded-full font-semibold
+                {% if s.is_approved %}bg-green-100 text-green-700{% else %}bg-yellow-100 text-yellow-700{% endif %}">
+                {% if s.is_approved %}Approved{% else %}Pending{% endif %}
+              </span>
+            </td>
+            <td class="px-4 py-3 flex gap-2 flex-wrap">
+              {% if not s.is_approved %}
+                <form method="POST" action="{{ url_for('admin.approve_seller', uid=s.id) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                  <button class="text-xs bg-green-50 text-green-700 px-3 py-1 rounded-lg hover:bg-green-100 transition">✅ Approve</button>
+                </form>
+              {% endif %}
+              <form method="POST" action="{{ url_for('admin.reject_seller', uid=s.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button class="text-xs bg-red-50 text-red-600 px-3 py-1 rounded-lg hover:bg-red-100 transition">❌ Reject</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

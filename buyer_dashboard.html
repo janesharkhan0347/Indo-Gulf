@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Buyer Dashboard{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+  <div class="flex flex-col md:flex-row gap-8">
+
+    <!-- Sidebar -->
+    <aside class="w-full md:w-56 flex-shrink-0">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-gold p-5 text-center">
+          <div class="w-16 h-16 rounded-full bg-primary mx-auto flex items-center justify-center text-2xl font-extrabold text-white">
+            {{ current_user.name[0].upper() }}
+          </div>
+          <p class="text-primary font-bold mt-2 text-sm">{{ current_user.name }}</p>
+          <p class="text-green-800 text-xs">🌍 {{ current_user.country }}</p>
+        </div>
+        <nav class="p-3 space-y-1 text-sm">
+          <a href="{{ url_for('buyer.dashboard') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-gold/20 text-primary font-semibold">📊 Dashboard</a>
+          <a href="{{ url_for('main.products') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-600 hover:text-primary transition">🛒 Browse Products</a>
+          <a href="{{ url_for('buyer.profile') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-600 hover:text-primary transition">👤 Profile</a>
+          <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-50 text-red-500 transition">🚪 Logout</a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="flex-1 space-y-6">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {% for label, value, icon in [
+          ('Total RFQs', rfqs|length, '📋'),
+          ('Pending', rfqs|selectattr('status','eq','pending')|list|length, '⏳'),
+          ('Favorites', fav_products|length, '♡'),
+        ] %}
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 text-center">
+            <div class="text-3xl mb-1">{{ icon }}</div>
+            <div class="text-2xl font-extrabold text-primary">{{ value }}</div>
+            <div class="text-xs text-gray-400">{{ label }}</div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- RFQ History -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h2 class="text-lg font-bold text-primary mb-4">My RFQ History</h2>
+        {% if rfqs %}
+          <div class="space-y-3">
+            {% for rfq in rfqs %}
+              <div class="flex items-start justify-between p-4 bg-gray-50 rounded-xl">
+                <div>
+                  <p class="font-semibold text-sm">{{ rfq.product.title if rfq.product else '—' }}</p>
+                  <p class="text-xs text-gray-500 mt-0.5">{{ rfq.quantity }} {{ rfq.unit }} · {{ rfq.created_at.strftime('%d %b %Y') }}</p>
+                  <p class="text-xs text-gray-400 mt-1">{{ rfq.message[:80] }}…</p>
+                </div>
+                <span class="text-xs px-2 py-1 rounded-full font-semibold
+                  {% if rfq.status == 'pending' %}bg-yellow-100 text-yellow-700
+                  {% elif rfq.status == 'replied' %}bg-green-100 text-green-700
+                  {% else %}bg-gray-100 text-gray-500{% endif %}">
+                  {{ rfq.status|title }}
+                </span>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-10 text-gray-400">
+            <p>No RFQs yet. <a href="{{ url_for('main.products') }}" class="text-primary font-semibold">Browse products</a> to get started.</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Favorites -->
+      {% if fav_products %}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-primary mb-4">Saved Products</h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {% for p in fav_products %}
+              <a href="{{ url_for('main.product_detail', slug=p.slug) }}"
+                 class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gold/10 transition">
+                <span class="text-3xl">{{ p.category.icon if p.category else '📦' }}</span>
+                <div>
+                  <p class="text-xs font-semibold text-gray-700 line-clamp-2">{{ p.title }}</p>
+                  <p class="text-xs text-primary font-bold">${{ "%.2f"|format(p.price) }}</p>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

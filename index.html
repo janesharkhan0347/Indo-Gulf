@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% block title %}IndoGulf – India to Gulf B2B Export Marketplace{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="relative bg-gradient-to-br from-primary via-green-900 to-dark-bg text-white overflow-hidden">
+  <div class="absolute inset-0 opacity-10"
+       style="background-image:url('https://www.transparenttextures.com/patterns/arabesque.png')"></div>
+  <div class="relative max-w-7xl mx-auto px-4 py-24 flex flex-col md:flex-row items-center gap-10">
+    <div class="flex-1 text-center md:text-left">
+      <div class="inline-block bg-gold text-primary text-xs font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-wider">
+        🌟 India's #1 Gulf Export Platform
+      </div>
+      <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
+        Export from <span class="text-gold">India</span><br/>to the <span class="text-gold">Gulf</span>
+      </h1>
+      <p class="text-green-200 text-lg md:text-xl mb-8 max-w-xl">
+        Connect verified Indian exporters with Gulf importers. Trade spices, food, fashion & more across UAE, Saudi Arabia, Qatar, Oman, Kuwait and Bahrain.
+      </p>
+
+      <!-- Search Bar -->
+      <form action="{{ url_for('main.search') }}" method="GET"
+            class="flex flex-col sm:flex-row gap-2 max-w-lg mx-auto md:mx-0">
+        <input name="q" placeholder="Search products or exporters…"
+               class="flex-1 px-5 py-3 rounded-full text-gray-800 text-sm font-medium shadow-lg outline-none focus:ring-2 focus:ring-gold"/>
+        <button class="bg-gold text-primary px-7 py-3 rounded-full font-bold hover:bg-gold-light transition shadow-lg">
+          Search
+        </button>
+      </form>
+
+      <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
+        {% for cat in categories[:6] %}
+          <a href="{{ url_for('main.category', slug=cat.slug) }}"
+             class="text-xs bg-white/10 hover:bg-gold hover:text-primary text-white px-3 py-1 rounded-full transition border border-white/20">
+            {{ cat.icon }} {{ cat.name }}
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Gulf flags panel -->
+    <div class="flex-shrink-0 grid grid-cols-3 gap-4 text-center">
+      {% for country, flag in [('UAE','🇦🇪'),('Saudi Arabia','🇸🇦'),('Qatar','🇶🇦'),('Oman','🇴🇲'),('Kuwait','🇰🇼'),('Bahrain','🇧🇭')] %}
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-4 hover:bg-gold/20 transition cursor-default">
+          <div class="text-4xl mb-1">{{ flag }}</div>
+          <div class="text-xs text-green-200 font-medium">{{ country }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<section class="bg-gold text-primary py-4">
+  <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-around gap-4 text-center font-bold text-sm">
+    <div>🌍 6 Gulf Countries</div>
+    <div>✅ Verified Exporters</div>
+    <div>📦 12+ Categories</div>
+    <div>⚡ Direct B2B Trade</div>
+    <div>💬 WhatsApp Connect</div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="max-w-7xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <h2 class="text-3xl font-extrabold text-primary mb-2">Browse by Category</h2>
+    <p class="text-gray-500">Explore India's finest export products</p>
+  </div>
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+    {% for cat in categories %}
+      <a href="{{ url_for('main.category', slug=cat.slug) }}"
+         class="group flex flex-col items-center bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-gold hover:-translate-y-1 transition-all duration-200">
+        <span class="text-4xl mb-2">{{ cat.icon }}</span>
+        <span class="text-sm font-semibold text-gray-700 group-hover:text-primary text-center">{{ cat.name }}</span>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- FEATURED PRODUCTS -->
+<section class="bg-gray-50 py-16">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex justify-between items-center mb-10">
+      <div>
+        <h2 class="text-3xl font-extrabold text-primary">Featured Products</h2>
+        <p class="text-gray-500 mt-1">Premium Indian exports ready for Gulf markets</p>
+      </div>
+      <a href="{{ url_for('main.products') }}"
+         class="text-primary font-semibold hover:text-gold transition text-sm">View All →</a>
+    </div>
+
+    {% if featured %}
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for product in featured %}
+          <a href="{{ url_for('main.product_detail', slug=product.slug) }}"
+             class="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 hover:border-gold transition-all duration-300 overflow-hidden">
+            <div class="relative overflow-hidden h-48 bg-gray-100">
+              {% if product.image and product.image != 'default_product.png' %}
+                <img src="{{ url_for('static', filename='uploads/products/' + product.image) }}"
+                     alt="{{ product.title }}"
+                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
+              {% else %}
+                <div class="w-full h-full flex items-center justify-center text-6xl bg-gradient-to-br from-green-50 to-yellow-50">
+                  {{ product.category.icon if product.category else '📦' }}
+                </div>
+              {% endif %}
+              <span class="absolute top-2 left-2 bg-gold text-primary text-xs font-bold px-2 py-0.5 rounded-full">
+                Featured
+              </span>
+            </div>
+            <div class="p-4">
+              <span class="text-xs text-gray-400 font-medium">{{ product.category.name if product.category else '' }}</span>
+              <h3 class="font-semibold text-gray-800 mt-0.5 group-hover:text-primary transition line-clamp-2">
+                {{ product.title }}
+              </h3>
+              <div class="flex items-center justify-between mt-3">
+                <span class="text-primary font-bold text-lg">${{ "%.2f"|format(product.price) }}/{{ product.unit }}</span>
+                <span class="text-xs text-gray-400">MOQ: {{ product.moq }} {{ product.unit }}</span>
+              </div>
+              <div class="text-xs text-gray-400 mt-1">🇮🇳 {{ product.seller.company_name if product.seller else '' }}</div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center py-16 text-gray-400">
+        <div class="text-5xl mb-4">📦</div>
+        <p>Products coming soon. <a href="{{ url_for('auth.register_seller') }}" class="text-primary font-semibold">List your products!</a></p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- FEATURED SELLERS -->
+{% if top_sellers %}
+<section class="max-w-7xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <h2 class="text-3xl font-extrabold text-primary">Trusted Exporters</h2>
+    <p class="text-gray-500 mt-1">Verified Indian exporters ready to ship to the Gulf</p>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    {% for seller in top_sellers %}
+      <a href="{{ url_for('main.seller_profile', seller_id=seller.id) }}"
+         class="flex flex-col items-center bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md hover:border-gold transition text-center">
+        <div class="w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-2">
+          {{ seller.name[0].upper() }}
+        </div>
+        <p class="text-xs font-semibold text-gray-700 line-clamp-2">{{ seller.company_name or seller.name }}</p>
+        <p class="text-xs text-gray-400 mt-0.5">🇮🇳 India</p>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- WHY INDOGULF -->
+<section class="bg-gradient-to-br from-primary to-green-900 text-white py-16">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-extrabold mb-2">Why Choose IndoGulf?</h2>
+      <p class="text-green-200">The most trusted India-to-Gulf B2B trade platform</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {% for item in [
+        ('✅','Verified Exporters','Every seller is verified with GST & IEC export codes before approval.'),
+        ('🛡️','Secure Transactions','End-to-end secure inquiries and RFQ system.'),
+        ('⚡','Direct Connection','Connect directly via WhatsApp or RFQ — no middlemen.'),
+        ('🌍','6 Gulf Markets','Serving UAE, Saudi Arabia, Qatar, Oman, Kuwait and Bahrain.'),
+      ] %}
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 text-center hover:bg-white/20 transition">
+          <div class="text-4xl mb-3">{{ item[0] }}</div>
+          <h3 class="font-bold text-gold mb-2">{{ item[1] }}</h3>
+          <p class="text-green-200 text-sm">{{ item[2] }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="max-w-7xl mx-auto px-4 py-16 text-center">
+  <div class="bg-gradient-to-r from-gold/20 to-yellow-50 border border-gold rounded-3xl p-12">
+    <h2 class="text-3xl font-extrabold text-primary mb-3">Ready to Expand Your Export Business?</h2>
+    <p class="text-gray-600 mb-8 max-w-xl mx-auto">Join hundreds of Indian exporters already trading with Gulf importers through IndoGulf.</p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="{{ url_for('auth.register_seller') }}"
+         class="bg-primary text-white px-8 py-3 rounded-full font-bold hover:bg-green-800 transition shadow-lg">
+        🇮🇳 Register as Exporter
+      </a>
+      <a href="{{ url_for('auth.register_buyer') }}"
+         class="bg-gold text-primary px-8 py-3 rounded-full font-bold hover:bg-gold-light transition shadow-lg">
+        🌍 Register as Gulf Buyer
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

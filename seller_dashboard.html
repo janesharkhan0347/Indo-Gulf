@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}Seller Dashboard{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+  <div class="flex flex-col md:flex-row gap-8">
+
+    <!-- Sidebar -->
+    <aside class="w-full md:w-56 flex-shrink-0">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-primary p-5 text-center">
+          <div class="w-16 h-16 rounded-full bg-gold mx-auto flex items-center justify-center text-2xl font-extrabold text-primary">
+            {{ current_user.name[0].upper() }}
+          </div>
+          <p class="text-white font-bold mt-2 text-sm">{{ current_user.name }}</p>
+          <p class="text-green-200 text-xs">🇮🇳 Exporter</p>
+        </div>
+        <nav class="p-3 space-y-1 text-sm">
+          <a href="{{ url_for('seller.dashboard') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-primary font-semibold">📊 Dashboard</a>
+          <a href="{{ url_for('seller.add_product') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-600 hover:text-primary transition">➕ Add Product</a>
+          <a href="{{ url_for('seller.rfqs') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-600 hover:text-primary transition">📋 RFQs</a>
+          <a href="{{ url_for('seller.profile') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-600 hover:text-primary transition">👤 Profile</a>
+          <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-50 text-red-500 transition">🚪 Logout</a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 space-y-6">
+      <!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {% for label, value, icon in [
+          ('Products', products|length, '📦'),
+          ('Total Views', total_views, '👁️'),
+          ('RFQs', rfqs|length, '📋'),
+          ('Pending', rfqs|selectattr('status','eq','pending')|list|length, '⏳')
+        ] %}
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 text-center">
+            <div class="text-3xl mb-1">{{ icon }}</div>
+            <div class="text-2xl font-extrabold text-primary">{{ value }}</div>
+            <div class="text-xs text-gray-400 mt-0.5">{{ label }}</div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Products Table -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex justify-between items-center mb-5">
+          <h2 class="text-lg font-bold text-primary">My Products</h2>
+          <a href="{{ url_for('seller.add_product') }}"
+             class="bg-primary text-white text-xs px-4 py-2 rounded-lg font-semibold hover:bg-green-800 transition">
+            + Add New
+          </a>
+        </div>
+        {% if products %}
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="text-xs text-gray-400 uppercase border-b">
+                <tr>
+                  <th class="pb-3 text-left">Product</th>
+                  <th class="pb-3 text-left">Price</th>
+                  <th class="pb-3 text-left">MOQ</th>
+                  <th class="pb-3 text-left">Views</th>
+                  <th class="pb-3 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-50">
+                {% for p in products %}
+                  <tr class="hover:bg-gray-50 transition">
+                    <td class="py-3 font-medium text-gray-800">{{ p.title[:40] }}</td>
+                    <td class="py-3 text-primary font-semibold">${{ "%.2f"|format(p.price) }}</td>
+                    <td class="py-3 text-gray-500">{{ p.moq }} {{ p.unit }}</td>
+                    <td class="py-3 text-gray-500">{{ p.views }}</td>
+                    <td class="py-3 flex gap-2">
+                      <a href="{{ url_for('seller.edit_product', pid=p.id) }}"
+                         class="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-lg hover:bg-blue-100 transition">Edit</a>
+                      <form method="POST" action="{{ url_for('seller.delete_product', pid=p.id) }}"
+                            onsubmit="return confirm('Delete this product?')">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <button class="text-xs bg-red-50 text-red-500 px-3 py-1 rounded-lg hover:bg-red-100 transition">Delete</button>
+                      </form>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-center py-10 text-gray-400">
+            <div class="text-4xl mb-3">📦</div>
+            <p>No products yet. <a href="{{ url_for('seller.add_product') }}" class="text-primary font-semibold">Add your first product!</a></p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Recent RFQs -->
+      {% if rfqs %}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-primary mb-4">Recent RFQs</h2>
+          <div class="space-y-3">
+            {% for rfq in rfqs[:5] %}
+              <div class="flex items-start justify-between p-4 bg-gray-50 rounded-xl">
+                <div>
+                  <p class="font-semibold text-sm text-gray-800">{{ rfq.product.title if rfq.product else 'Product' }}</p>
+                  <p class="text-xs text-gray-500 mt-0.5">By: {{ rfq.buyer.name if rfq.buyer else '—' }} · {{ rfq.quantity }} {{ rfq.unit }}</p>
+                  <p class="text-xs text-gray-400 mt-1">{{ rfq.message[:80] }}…</p>
+                </div>
+                <span class="text-xs px-2 py-1 rounded-full font-semibold
+                  {% if rfq.status == 'pending' %}bg-yellow-100 text-yellow-700
+                  {% elif rfq.status == 'replied' %}bg-green-100 text-green-700
+                  {% else %}bg-gray-100 text-gray-500{% endif %}">
+                  {{ rfq.status|title }}
+                </span>
+              </div>
+            {% endfor %}
+          </div>
+          <a href="{{ url_for('seller.rfqs') }}" class="text-primary text-sm font-semibold mt-3 inline-block hover:underline">View all RFQs →</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+<nav class="bg-primary shadow-lg sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
+
+    <!-- Logo -->
+    <a href="{{ url_for('main.index') }}" class="flex items-center gap-2">
+      <span class="text-gold font-extrabold text-2xl tracking-tight">Indo<span class="text-white">Gulf</span></span>
+      <span class="hidden sm:block text-xs text-green-300 font-medium">India → Gulf B2B</span>
+    </a>
+
+    <!-- Search -->
+    <form action="{{ url_for('main.search') }}" method="GET"
+          class="hidden md:flex flex-1 max-w-xl mx-6">
+      <input name="q" placeholder="Search products, exporters…"
+             value="{{ request.args.get('q','') }}"
+             class="w-full px-4 py-2 rounded-l-full text-sm border-0 focus:ring-2 focus:ring-gold outline-none"/>
+      <button class="bg-gold text-primary px-5 py-2 rounded-r-full font-semibold text-sm hover:bg-gold-light transition">
+        Search
+      </button>
+    </form>
+
+    <!-- Nav Links -->
+    <div class="flex items-center gap-3 text-sm">
+      <a href="{{ url_for('main.products') }}" class="text-green-200 hover:text-gold transition hidden sm:block">Products</a>
+      <a href="{{ url_for('main.all_categories') }}" class="text-green-200 hover:text-gold transition hidden sm:block">Categories</a>
+
+      {% if current_user.is_authenticated %}
+        {% if current_user.role == 'seller' %}
+          <a href="{{ url_for('seller.dashboard') }}"
+             class="bg-gold text-primary px-4 py-1.5 rounded-full font-semibold hover:bg-gold-light transition">Dashboard</a>
+        {% elif current_user.role == 'buyer' %}
+          <a href="{{ url_for('buyer.dashboard') }}"
+             class="bg-gold text-primary px-4 py-1.5 rounded-full font-semibold hover:bg-gold-light transition">Dashboard</a>
+        {% elif current_user.role == 'admin' %}
+          <a href="{{ url_for('admin.dashboard') }}"
+             class="bg-gold text-primary px-4 py-1.5 rounded-full font-semibold hover:bg-gold-light transition">Admin</a>
+        {% endif %}
+        <a href="{{ url_for('auth.logout') }}" class="text-green-200 hover:text-red-300 transition">Logout</a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}" class="text-green-200 hover:text-gold transition">Login</a>
+        <a href="{{ url_for('auth.register') }}"
+           class="bg-gold text-primary px-4 py-1.5 rounded-full font-semibold hover:bg-gold-light transition">Register</a>
+      {% endif %}
+
+      <!-- Mobile menu button -->
+      <button id="mobile-menu-btn" class="md:hidden text-white ml-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile nav -->
+  <div id="mobile-menu" class="hidden md:hidden bg-primary border-t border-green-700 px-4 py-3 space-y-2 text-sm">
+    <form action="{{ url_for('main.search') }}" method="GET" class="flex mb-2">
+      <input name="q" placeholder="Search products…" class="flex-1 px-3 py-2 rounded-l-full text-sm outline-none"/>
+      <button class="bg-gold text-primary px-4 py-2 rounded-r-full font-semibold">Go</button>
+    </form>
+    <a href="{{ url_for('main.products') }}" class="block text-green-200 py-1">Products</a>
+    <a href="{{ url_for('main.all_categories') }}" class="block text-green-200 py-1">Categories</a>
+  </div>
+</nav>

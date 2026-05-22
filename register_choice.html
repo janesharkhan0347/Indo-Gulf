@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-primary to-green-900 flex items-center justify-center px-4 py-16">
+  <div class="w-full max-w-2xl">
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-extrabold text-white mb-2">Join IndoGulf</h1>
+      <p class="text-green-200">Choose how you want to participate</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <a href="{{ url_for('auth.register_seller') }}"
+         class="group bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all text-center">
+        <div class="text-6xl mb-4">🇮🇳</div>
+        <h2 class="text-2xl font-extrabold text-primary mb-2">Seller / Exporter</h2>
+        <p class="text-gray-500 text-sm mb-4">I'm an Indian exporter who wants to sell to Gulf buyers.</p>
+        <span class="inline-block bg-primary text-white px-6 py-2 rounded-full text-sm font-bold group-hover:bg-gold group-hover:text-primary transition">
+          Register as Seller →
+        </span>
+      </a>
+
+      <a href="{{ url_for('auth.register_buyer') }}"
+         class="group bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all text-center">
+        <div class="text-6xl mb-4">🌍</div>
+        <h2 class="text-2xl font-extrabold text-primary mb-2">Buyer / Importer</h2>
+        <p class="text-gray-500 text-sm mb-4">I'm a Gulf importer looking to source from Indian exporters.</p>
+        <span class="inline-block bg-gold text-primary px-6 py-2 rounded-full text-sm font-bold group-hover:bg-primary group-hover:text-white transition">
+          Register as Buyer →
+        </span>
+      </a>
+
+    </div>
+    <div class="text-center mt-6">
+      <a href="{{ url_for('auth.login') }}" class="text-green-200 text-sm hover:text-white transition">
+        Already have an account? Login →
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
