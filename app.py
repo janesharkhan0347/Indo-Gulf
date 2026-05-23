@@ -41,11 +41,12 @@ def create_app(config_name=None):
     login_manager.login_message_category = 'warning'
 
     # Register blueprints
-    from routes.main import main_bp
-    from routes.auth import auth_bp
-    from routes.seller import seller_bp
-    from routes.buyer import buyer_bp
-    from routes.admin import admin_bp
+     # Yeh daaliye:
+    from main import main_bp
+    from auth import auth_bp
+    from seller import seller_bp
+    from buyer import buyer_bp
+    from admin import admin_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp, url_prefix='/auth')
